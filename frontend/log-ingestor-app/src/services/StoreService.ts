@@ -9,84 +9,76 @@ import { TimeUtils } from "../utils/TimeUtils";
 
 import { IDataTableRow } from "../types/DataTable.types";
 import { ELOG_ITEM_KEYS, ILogData } from "../types/LogData.types";
-import { IDropDownData, IProcessedLogData } from "../types/StoreTypes";
+import {
+  IDropDownData,
+  IGetProcessedLogData,
+  IProcessedLogData,
+} from "../types/StoreTypes";
 
 export class StoreService {
-  static hydrateStore = (data: ILogData) => {
-    const { tableRows, tableFilterDropDownData } =
-      this.getProcessedLogData(data);
+  static hydrateStore = (
+    data: ILogData,
+    isHydrateTableFilterDropDownStore: boolean = true
+  ) => {
+    const { tableRows, tableFilterDropDownData = null } =
+      this.getProcessedLogData({
+        logData: data,
+        ...(isHydrateTableFilterDropDownStore && {
+          dropDownData: {
+            resourceIds: [],
+            levels: [],
+            parentResourceIds: [],
+            traceIds: [],
+            spanIds: [],
+          },
+        }),
+      });
 
     store.dispatch(hydrateTableRows(tableRows));
-    store.dispatch(hydrateTableFilterDropDown(tableFilterDropDownData));
+
+    if (tableFilterDropDownData)
+      store.dispatch(hydrateTableFilterDropDown(tableFilterDropDownData));
   };
 
-  static getProcessedLogData = (data: ILogData): IProcessedLogData => {
+  static getProcessedLogData = (
+    props: IGetProcessedLogData
+  ): IProcessedLogData => {
+    const { logData, dropDownData = null } = props;
+
     const dataTableData: IDataTableRow[] = [];
-    const resourceIdDropDownData: IDropDownData[] = [];
-    const levelDropDownData: IDropDownData[] = [];
-    const parentResourceIdDropDownData: IDropDownData[] = [];
-    const traceIdDropDownData: IDropDownData[] = [];
-    const spanIdDropDownData: IDropDownData[] = [];
 
-    const visitedLevelValueSet = new Set();
-    const visitedResourceIdValueSet = new Set();
-    const visitedParentResourceValueSet = new Set();
-    const visitedTraceIdValueSet = new Set();
-    const visitedSpanIdValueSet = new Set();
+    const storeDropDownData = (value: string, dropDownData: string[]) => {
+      if (dropDownData.indexOf(value) === -1) dropDownData.push(value);
+    };
 
-    //ToDo: uniqueIdentification can done on backend..
-    // set can be converted into dropdown options
-    // proxy can be done on backend... (size improves, but lookups affects)
+    const getDropDownData = (dropDownData: string[]): IDropDownData[] => {
+      return dropDownData.map((label) => {
+        return {
+          value: uniqueId(),
+          label,
+        };
+      });
+    };
 
-    data.map((logItem) => {
-      const {
-        metadata: { parentResourceId },
-        timestamp,
-        ...rest
-      } = logItem;
-      const { level, resourceId, traceId, spanId } = rest;
-      const id = uniqueId();
-      if (!visitedLevelValueSet.has(level)) {
-        visitedLevelValueSet.add(level);
-        levelDropDownData.push({ label: level, value: id });
+    logData.map((logItem) => {
+      const { metadata, timestamp, ...rest } = logItem;
+      const { resourceId, level, traceId, spanId } = rest;
+
+      if (dropDownData) {
+        const { resourceIds, levels, parentResourceIds, traceIds, spanIds } =
+          dropDownData;
+
+        storeDropDownData(resourceId, resourceIds);
+        storeDropDownData(level, levels);
+        storeDropDownData(metadata.parentResourceId, parentResourceIds);
+        storeDropDownData(traceId, traceIds);
+        storeDropDownData(spanId, spanIds);
       }
-
-      if (!visitedResourceIdValueSet.has(resourceId)) {
-        visitedResourceIdValueSet.add(resourceId);
-        resourceIdDropDownData.push({ label: resourceId, value: id });
-      }
-
-      if (!visitedParentResourceValueSet.has(parentResourceId)) {
-        visitedParentResourceValueSet.add(parentResourceId);
-        parentResourceIdDropDownData.push({
-          label: parentResourceId,
-          value: id,
-        });
-      }
-
-      if (!visitedTraceIdValueSet.has(traceId)) {
-        visitedTraceIdValueSet.add(traceId);
-        traceIdDropDownData.push({ label: traceId, value: id });
-      }
-
-      if (!visitedSpanIdValueSet.has(spanId)) {
-        visitedSpanIdValueSet.add(spanId);
-        spanIdDropDownData.push({ label: spanId, value: id });
-      }
-
-      // resourceIdDropDownData.push({ label: resourceId, value: id });
-      // levelDropDownData.push({ label: level, value: id });
-      // parentResourceIdDropDownData.push({
-      //   label: parentResourceId,
-      //   value: id,
-      // });
-      // traceIdDropDownData.push({ label: traceId, value: id });
-      // spanIdDropDownData.push({ label: spanId, value: id });
 
       const dataTableRow: IDataTableRow = {
         ...(rest as unknown as IDataTableRow),
         timestamp: TimeUtils.formatTimeStamp(timestamp),
-        [ELOG_ITEM_KEYS.PARENT_RESOURCE_ID]: parentResourceId,
+        [ELOG_ITEM_KEYS.PARENT_RESOURCE_ID]: metadata.parentResourceId,
       };
 
       dataTableData.push(dataTableRow);
@@ -94,13 +86,17 @@ export class StoreService {
 
     return {
       tableRows: dataTableData,
-      tableFilterDropDownData: {
-        resourceIdDropDownData,
-        levelDropDownData,
-        parentResourceIdDropDownData,
-        traceIdDropDownData,
-        spanIdDropDownData,
-      },
+      ...(dropDownData && {
+        tableFilterDropDownData: {
+          resourceIdDropDownData: getDropDownData(dropDownData.resourceIds),
+          levelDropDownData: getDropDownData(dropDownData.levels),
+          parentResourceIdDropDownData: getDropDownData(
+            dropDownData.parentResourceIds
+          ),
+          traceIdDropDownData: getDropDownData(dropDownData.traceIds),
+          spanIdDropDownData: getDropDownData(dropDownData.spanIds),
+        },
+      }),
     };
   };
 }

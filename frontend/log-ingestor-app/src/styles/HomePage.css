@@ -10,7 +10,11 @@
   gap: 10px;
 }
 
-.home-page-container .MuiTableContainer-root {
+.home-page-container .css-1ps6pg7-MuiPaper-root {
   height: fit-content;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 18px 50px -10px;
+}
+
+.home-page-container .css-11xur9t-MuiPaper-root-MuiTableContainer-root {
+  box-shadow: none !important;
 }

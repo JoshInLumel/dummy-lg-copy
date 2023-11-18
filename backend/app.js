@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
-// const path = require("path");
+const { LOG_KEYS } = require("./constants/LogConstants");
 
 const app = express();
 const port = 3000;
@@ -12,7 +12,6 @@ mongoose.connect("mongodb://localhost:27017/logs", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-const db = mongoose.connection;
 
 //creating a schema for the logs
 const logSchema = new mongoose.Schema({
@@ -52,18 +51,6 @@ app.post("/api/log", (req, res) => {
     });
 });
 
-// //endpoint - to serve the React app
-// app.use(
-//   express.static(path.join(__dirname, "../frontend/log-ingestor-app/build"))
-// );
-
-// // Handle React app index path
-// app.get("*", (req, res) => {
-//   res.sendFile(
-//     path.join(__dirname, "../frontend/log-ingestor-app/build", "index.html")
-//   );
-// });
-
 //endpoint - to retrieve all the logs
 app.get("/api/getLogs", async (req, res) => {
   try {
@@ -75,18 +62,28 @@ app.get("/api/getLogs", async (req, res) => {
   }
 });
 
-// Endpoint to get filtered logs
+//endpoint to get the filtered logs
 app.get("/api/getFilteredLogs", async (req, res) => {
   try {
-    const query = req.query; // Get query parameters from the request
+    const query = req.query;
 
-    // Build the filter object based on the query parameters
+    //constructing the filter object based on the query parameters
     const filter = {};
-    if (query.level) filter.level = query.level;
-    if (query.resourceId) filter.resourceId = query.resourceId;
-    // ... (add other filters based on your requirements)
+    LOG_KEYS.forEach((key) => {
+      const value = query?.[key];
+      if (value) {
+        switch (key) {
+          case "parentResourceId":
+            filter["metadata.parentResourceId"] = value;
+            break;
+          default:
+            filter[key] = value;
+            break;
+        }
+      }
+    });
 
-    // Find documents in the "logs" collection based on the filter
+    //finding the documents in the "logs" collection based on the filter
     const logs = await Log.find(filter);
 
     res.json({ status: "success", logs });

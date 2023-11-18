@@ -6,8 +6,21 @@ import {
   IResetFilterData,
 } from "../types/Filter.types";
 import { LogService } from "./LogService";
+import { StoreService } from "./StoreService";
+import { ILogData } from "../types/LogData.types";
 
 export class FilterService {
+  static updateTableRowsStore = (updatedFilterData: IFilterData) => {
+    const filterBackendFilterQuery =
+      FilterUtils.generateBackendFilterQuery(updatedFilterData);
+
+    LogService.getFilteredLogs(filterBackendFilterQuery).then(
+      (data: ILogData) => {
+        StoreService.hydrateStore(data, false);
+      }
+    );
+  };
+
   static updateFilterData = (props: IUpdateFilterData) => {
     const { dropDownType, selectedItem, filterData, setFilterData } = props;
 
@@ -16,23 +29,16 @@ export class FilterService {
       [dropDownType]: selectedItem ?? { label: "", value: "" },
     };
 
-    const filterBackendFilterQuery =
-      FilterUtils.generateBackendFilterQuery(updatedFilterData);
-
-    LogService.getFilteredLogs(filterBackendFilterQuery).then((data) => {
-      console.log(data, "ok@");
-    });
-
-    //trigger search query api here
-
+    FilterService.updateTableRowsStore(updatedFilterData);
     setFilterData(updatedFilterData);
   };
 
   static resetFilter = (props: IResetFilterData) => {
     const { setFilterData } = props;
 
-    //trigger search query api here
+    const updatedFilterData = FilterUtils.getDefaultFilterData();
 
-    setFilterData(FilterUtils.getDefaultFilterData());
+    FilterService.updateTableRowsStore(updatedFilterData);
+    setFilterData(updatedFilterData);
   };
 }

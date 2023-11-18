@@ -10,7 +10,7 @@ const NavBar = () => {
         <a href="https://dyte.io/">
           <img src={dyteLogo} alt="Logo" />
         </a>
-        <div className="title">LOGS INGESTOR</div>
+        <div className="title">LOGS VIEWER</div>
       </div>
     </>
   );

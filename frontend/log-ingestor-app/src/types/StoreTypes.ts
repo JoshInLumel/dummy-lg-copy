@@ -1,6 +1,6 @@
 import { Action } from "redux";
 import { IDataTableRow } from "./DataTable.types";
-import { ELOG_ITEM_KEYS } from "./LogData.types";
+import { ILogData } from "./LogData.types";
 
 //tableRowsReducer types
 export const HYDRATE_TABLE_ROWS = "HYDRATE_TABLE_ROWS";
@@ -28,7 +28,7 @@ export interface ITableFilterDropDowData {
 
 export interface IProcessedLogData {
   tableRows: IDataTableRow[];
-  tableFilterDropDownData: ITableFilterDropDowData;
+  tableFilterDropDownData?: ITableFilterDropDowData;
 }
 
 export interface ITableFilterDropDownHydrateAction
@@ -40,4 +40,16 @@ export interface ITableFilterDropDownHydrateAction
 export interface IRootState {
   tableRows: IDataTableRow[];
   tableFilterDropDown: ITableFilterDropDowData;
+}
+
+//store service types
+export interface IGetProcessedLogData {
+  logData: ILogData;
+  dropDownData?: {
+    resourceIds: string[];
+    levels: string[];
+    parentResourceIds: string[];
+    traceIds: string[];
+    spanIds: string[];
+  };
 }
