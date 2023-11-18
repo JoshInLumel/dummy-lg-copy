@@ -2,8 +2,8 @@ import React from "react";
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { FixedSizeList } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
+// import { FixedSizeList } from "react-window";
+// import AutoSizer from "react-virtualized-auto-sizer";
 import {
   IDropDownMenuItem,
   IDropDownPassedProps,
@@ -11,7 +11,6 @@ import {
 
 const DropDown = (props: IDropDownPassedProps) => {
   const { value, menu, label, onSelect } = props;
-
 
   return (
     <Autocomplete
