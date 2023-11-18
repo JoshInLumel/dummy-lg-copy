@@ -6,8 +6,9 @@ async function deleteRandomLogs(n) {
   try {
     // Fetch n logs from the server (you might need to adjust the endpoint)
     const response = await axios.get(`${serverUrl}/firstNLogs/${n}`);
-    console.log('response: ', response);
+    // console.log('response: ', response);
     const logsToDelete = response.data.logs;
+    console.log('logs deleting: ', logsToDelete.length);
 
     // Extract log IDs
     const logIdsToDelete = logsToDelete.map(log => log._id);
@@ -21,5 +22,5 @@ async function deleteRandomLogs(n) {
   }
 }
 
-const numberOfLogsToDelete = 2000;
+const numberOfLogsToDelete = 30;
 deleteRandomLogs(numberOfLogsToDelete);

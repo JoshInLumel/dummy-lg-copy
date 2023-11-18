@@ -21,6 +21,7 @@ import {
 import { IDropDownMenuItem } from "../types/DropDown.types";
 
 import "../styles/Filter.css";
+import DateRange from "./reusables/DataRange";
 
 const handleOnResetClick = (props: IResetFilterData) =>
   FilterService.resetFilter(props);
@@ -80,6 +81,7 @@ const Filter = (props: StateProps) => {
       </div>
       <div className="body">
         {renderDropDowns({ tableFilterDropDown, filterData, setFilterData })}
+        <DateRange />
       </div>
     </div>
   );
