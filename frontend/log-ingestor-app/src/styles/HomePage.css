@@ -1,0 +1,16 @@
+.home-page-container {
+  width: 100%;
+  height: calc(100% - 80px);
+  min-height: calc(100% - 80px);
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  box-sizing: border-box;
+  display: flex;
+  gap: 10px;
+}
+
+.home-page-container .MuiTableContainer-root {
+  height: fit-content;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 18px 50px -10px;
+}

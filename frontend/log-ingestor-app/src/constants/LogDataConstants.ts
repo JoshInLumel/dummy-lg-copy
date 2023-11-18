@@ -1,0 +1,49 @@
+import { ELOG_ITEM_KEYS } from "../types/LogData.types";
+
+export const LOG_DATA_LABELS = {
+  [ELOG_ITEM_KEYS.RESOURCE_ID]: "Resource Id",
+  [ELOG_ITEM_KEYS.LEVEL]: "Level",
+  [ELOG_ITEM_KEYS.PARENT_RESOURCE_ID]: "Parent Resource Id",
+  [ELOG_ITEM_KEYS.TRACE_ID]: "Trace Id",
+  [ELOG_ITEM_KEYS.SPAN_ID]: "Span Id",
+  [ELOG_ITEM_KEYS.MESSAGE]: "Message",
+  [ELOG_ITEM_KEYS.COMMIT]: "Commit",
+  [ELOG_ITEM_KEYS.TIME_STAMP]: "Time",
+};
+
+const LOG_DATA_HEADERS = [
+  {
+    value: ELOG_ITEM_KEYS.RESOURCE_ID,
+    label: LOG_DATA_LABELS[ELOG_ITEM_KEYS.RESOURCE_ID],
+  },
+  {
+    value: ELOG_ITEM_KEYS.LEVEL,
+    label: LOG_DATA_LABELS[ELOG_ITEM_KEYS.LEVEL],
+  },
+  {
+    value: ELOG_ITEM_KEYS.PARENT_RESOURCE_ID,
+    label: LOG_DATA_LABELS[ELOG_ITEM_KEYS.PARENT_RESOURCE_ID],
+  },
+  {
+    value: ELOG_ITEM_KEYS.TRACE_ID,
+    label: LOG_DATA_LABELS[ELOG_ITEM_KEYS.TRACE_ID],
+  },
+  {
+    value: ELOG_ITEM_KEYS.SPAN_ID,
+    label: LOG_DATA_LABELS[ELOG_ITEM_KEYS.SPAN_ID],
+  },
+  {
+    value: ELOG_ITEM_KEYS.MESSAGE,
+    label: LOG_DATA_LABELS[ELOG_ITEM_KEYS.MESSAGE],
+  },
+  {
+    value: ELOG_ITEM_KEYS.COMMIT,
+    label: LOG_DATA_LABELS[ELOG_ITEM_KEYS.COMMIT],
+  },
+  {
+    value: ELOG_ITEM_KEYS.TIME_STAMP,
+    label: LOG_DATA_LABELS[ELOG_ITEM_KEYS.TIME_STAMP],
+  },
+];
+
+export { LOG_DATA_HEADERS };

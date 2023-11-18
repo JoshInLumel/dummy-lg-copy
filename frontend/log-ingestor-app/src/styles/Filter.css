@@ -1,0 +1,36 @@
+.filter-container {
+  width: 300px;
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 18px 50px -10px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.filter-container .header {
+  display: flex;
+  justify-content: space-between;
+  min-height: 30px;
+  border-bottom: 1px solid #222f3e;
+}
+
+.filter-container .header .left-content,
+.filter-container .header .right-content {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+.filter-container .header .right-content {
+  cursor: pointer;
+}
+
+.filter-container .body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 20px;
+  box-sizing: border-box;
+}

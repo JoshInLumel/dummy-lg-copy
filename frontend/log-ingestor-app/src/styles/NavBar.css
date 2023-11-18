@@ -1,0 +1,21 @@
+.nav-bar-container {
+  height: 80px;
+  width: 100%;
+  background-color: #fff;
+  border-bottom: 1px solid #ececec;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.nav-bar-container img {
+  cursor: pointer;
+}
+
+.nav-bar-container .title {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+}
