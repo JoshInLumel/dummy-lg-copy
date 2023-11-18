@@ -1,0 +1,14 @@
+# Node.js
+node_modules/
+npm-debug.log
+
+# Dependency directories
+jspm_packages/
+
+# User-specific files
+.idea/
+.vscode/
+.DS_Store
+
+# Environment variables
+.env
