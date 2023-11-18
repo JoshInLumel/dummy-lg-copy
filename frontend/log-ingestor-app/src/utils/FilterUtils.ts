@@ -1,4 +1,8 @@
-import { IFilterData } from "../types/Filter.types";
+import {
+  IBackendFilterQuery,
+  IFilterData,
+  IFilterItem,
+} from "../types/Filter.types";
 import { ELOG_ITEM_KEYS } from "../types/LogData.types";
 import { IDropDownData, ITableFilterDropDowData } from "../types/StoreTypes";
 
@@ -43,5 +47,23 @@ export class FilterUtils {
       default:
         return [];
     }
+  };
+
+  static generateBackendFilterQuery = (
+    data: IFilterData
+  ): IBackendFilterQuery => {
+    const backendFilterQuery: IBackendFilterQuery = {};
+
+    Object.keys(data).forEach((logkey) => {
+      const filterItem: IFilterItem = data[logkey as ELOG_ITEM_KEYS] ?? {
+        value: "",
+        label: "",
+      };
+
+      const { label } = filterItem;
+      backendFilterQuery[logkey as ELOG_ITEM_KEYS] = label;
+    });
+
+    return backendFilterQuery;
   };
 }

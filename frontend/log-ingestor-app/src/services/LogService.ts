@@ -1,5 +1,6 @@
 import axios from "axios";
 import { EnvironmentVariables } from "../EnvironmentVariables";
+import { IBackendFilterQuery } from "../types/Filter.types";
 
 /**
  * @Note
@@ -19,12 +20,32 @@ import { EnvironmentVariables } from "../EnvironmentVariables";
 }' http://localhost:3000/api/log
  */
 
+const axiosInstance = axios.create({
+  baseURL: `${EnvironmentVariables.BACKEND_URL}`,
+});
+
 export class LogService {
+  static getFilteredLogs = async (filterQuery: IBackendFilterQuery) => {
+    try {
+      const response = await axiosInstance.get("/getFilteredLogs", {
+        params: filterQuery,
+      });
+
+      const data = response.data;
+
+      if (data.status === "success") {
+        return data.logs;
+      } else {
+        console.error("Error fetching filtered logs:", data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching filtered logs:", error);
+    }
+  };
+
   static getAllLogs = async () => {
     try {
-      const response = await axios.get(
-        `${EnvironmentVariables.BACKEND_URL}/getLogs`
-      );
+      const response = await axiosInstance.get("/getLogs");
       return response.data.logs;
     } catch (error) {
       console.error("Error fetching data:", error);

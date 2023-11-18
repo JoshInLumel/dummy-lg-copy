@@ -5,6 +5,7 @@ import {
   IUpdateFilterData,
   IResetFilterData,
 } from "../types/Filter.types";
+import { LogService } from "./LogService";
 
 export class FilterService {
   static updateFilterData = (props: IUpdateFilterData) => {
@@ -14,6 +15,13 @@ export class FilterService {
       ...filterData,
       [dropDownType]: selectedItem ?? { label: "", value: "" },
     };
+
+    const filterBackendFilterQuery =
+      FilterUtils.generateBackendFilterQuery(updatedFilterData);
+
+    LogService.getFilteredLogs(filterBackendFilterQuery).then((data) => {
+      console.log(data, "ok@");
+    });
 
     //trigger search query api here
 

@@ -2,11 +2,13 @@ import { ELOG_ITEM_KEYS } from "./LogData.types";
 import { ITableFilterDropDowData } from "./StoreTypes";
 import { IDropDownMenuItem } from "./DropDown.types";
 
+export interface IFilterItem {
+  value: string;
+  label: string;
+}
+
 export type IFilterData = {
-  [key in ELOG_ITEM_KEYS]?: {
-    value: string;
-    label: string;
-  };
+  [key in ELOG_ITEM_KEYS]?: IFilterItem;
 };
 
 export interface IRenderFilterDropDowns {
@@ -25,3 +27,7 @@ export interface IUpdateFilterData {
 export interface IResetFilterData {
   setFilterData: (data: IFilterData) => void;
 }
+
+export type IBackendFilterQuery = {
+  [key in ELOG_ITEM_KEYS]?: string;
+};
