@@ -28,25 +28,65 @@ export class StoreService {
     const traceIdDropDownData: IDropDownData[] = [];
     const spanIdDropDownData: IDropDownData[] = [];
 
+    const visitedLevelValueSet = new Set();
+    const visitedResourceIdValueSet = new Set();
+    const visitedParentResourceValueSet = new Set();
+    const visitedTraceIdValueSet = new Set();
+    const visitedSpanIdValueSet = new Set();
+
+    //ToDo: uniqueIdentification can done on backend..
+    // set can be converted into dropdown options
+    // proxy can be done on backend... (size improves, but lookups affects)
+
     data.map((logItem) => {
-      const { metadata, timestamp, ...rest } = logItem;
-      const { resourceId, level, traceId, spanId } = rest;
-
+      const {
+        metadata: { parentResourceId },
+        timestamp,
+        ...rest
+      } = logItem;
+      const { level, resourceId, traceId, spanId } = rest;
       const id = uniqueId();
+      if (!visitedLevelValueSet.has(level)) {
+        visitedLevelValueSet.add(level);
+        levelDropDownData.push({ label: level, value: id });
+      }
 
-      resourceIdDropDownData.push({ label: resourceId, value: id });
-      levelDropDownData.push({ label: level, value: id });
-      parentResourceIdDropDownData.push({
-        label: metadata.parentResourceId,
-        value: id,
-      });
-      traceIdDropDownData.push({ label: traceId, value: id });
-      spanIdDropDownData.push({ label: spanId, value: id });
+      if (!visitedResourceIdValueSet.has(resourceId)) {
+        visitedResourceIdValueSet.add(resourceId);
+        resourceIdDropDownData.push({ label: resourceId, value: id });
+      }
+
+      if (!visitedParentResourceValueSet.has(parentResourceId)) {
+        visitedParentResourceValueSet.add(parentResourceId);
+        parentResourceIdDropDownData.push({
+          label: parentResourceId,
+          value: id,
+        });
+      }
+
+      if (!visitedTraceIdValueSet.has(traceId)) {
+        visitedTraceIdValueSet.add(traceId);
+        traceIdDropDownData.push({ label: traceId, value: id });
+      }
+
+      if (!visitedSpanIdValueSet.has(spanId)) {
+        visitedSpanIdValueSet.add(spanId);
+        spanIdDropDownData.push({ label: spanId, value: id });
+      }
+
+      // resourceIdDropDownData.push({ label: resourceId, value: id });
+      // levelDropDownData.push({ label: level, value: id });
+      // parentResourceIdDropDownData.push({
+      //   label: parentResourceId,
+      //   value: id,
+      // });
+      // traceIdDropDownData.push({ label: traceId, value: id });
+      // spanIdDropDownData.push({ label: spanId, value: id });
 
       const dataTableRow: IDataTableRow = {
         ...(rest as unknown as IDataTableRow),
         timestamp: TimeUtils.formatTimeStamp(timestamp),
-        [ELOG_ITEM_KEYS.PARENT_RESOURCE_ID]: metadata.parentResourceId,
+        [ELOG_ITEM_KEYS.PARENT_RESOURCE_ID]: parentResourceId,
       };
 
       dataTableData.push(dataTableRow);
