@@ -69,6 +69,7 @@ app.get("/api/getFilteredLogs", async (req, res) => {
 
     //constructing the filter object based on the query parameters
     const filter = {};
+    //processing the dropdowns filter query
     LOG_KEYS.forEach((key) => {
       const value = query?.[key];
       if (value) {
@@ -82,6 +83,21 @@ app.get("/api/getFilteredLogs", async (req, res) => {
         }
       }
     });
+
+    //processing the date-range filter query
+    if (query?.["dateData"]) {
+      const { startTime, endTime } = query["dateData"];
+
+      const formattedStartTime = new Date(startTime);
+      const formattedEndTime = new Date(endTime);
+
+      if (!isNaN(formattedStartTime) && !isNaN(formattedEndTime)) {
+        filter["timestamp"] = {
+          $gte: formattedStartTime,
+          $lte: formattedEndTime,
+        };
+      }
+    }
 
     //finding the documents in the "logs" collection based on the filter
     const logs = await Log.find(filter);
@@ -161,7 +177,6 @@ app.get("/api/getLogsByTimestamp", async (req, res) => {
   }
 });
 
-//starting the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

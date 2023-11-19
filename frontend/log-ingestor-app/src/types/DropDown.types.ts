@@ -6,6 +6,6 @@ export interface IDropDownMenuItem {
 export interface IDropDownPassedProps {
   menu: IDropDownMenuItem[];
   onSelect: (data: IDropDownMenuItem) => void;
-  value: string;
+  // value: string;
   label: string;
 }

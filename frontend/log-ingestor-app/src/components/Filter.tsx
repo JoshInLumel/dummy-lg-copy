@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 
-import DropDown from "./reusables/DropDown";
 import IconRenderer from "./reusables/IconRenderer";
+import DropDown from "./reusables/DropDown";
+import DateRangePicker from "./reusables/DateRangePicker";
 
 import { faFilter, faUndo } from "@fortawesome/free-solid-svg-icons";
 
@@ -14,6 +15,7 @@ import { FILTER_MENU } from "../constants/FilterConstants";
 
 import { IRootState } from "../types/StoreTypes";
 import {
+  IDateData,
   IFilterData,
   IRenderFilterDropDowns,
   IResetFilterData,
@@ -21,41 +23,60 @@ import {
 import { IDropDownMenuItem } from "../types/DropDown.types";
 
 import "../styles/Filter.css";
-import DateRange from "./reusables/DataRange";
+import { UI_TEXT } from "../constants/UIText";
 
 const handleOnResetClick = (props: IResetFilterData) =>
   FilterService.resetFilter(props);
 
 const renderDropDowns = (props: IRenderFilterDropDowns) => {
   const { tableFilterDropDown, filterData, setFilterData } = props;
+  const { dateData } = filterData;
+  const { startTime, endTime } = dateData as IDateData;
 
   const updateFilterDataProps = {
     filterData,
     setFilterData,
   };
 
-  return FILTER_MENU.map((item) => {
-    const { value, label } = item;
-    const dropDownData = FilterUtils.getDropDownData(
-      tableFilterDropDown,
-      value
-    );
+  return (
+    <>
+      {FILTER_MENU.map((item) => {
+        const { value, label } = item;
+        const dropDownData = FilterUtils.getDropDownData(
+          tableFilterDropDown,
+          value
+        );
 
-    return (
-      <DropDown
-        menu={dropDownData}
-        value={filterData[value]?.value ?? ""}
-        label={label}
-        onSelect={(data: IDropDownMenuItem) => {
+        return (
+          <DropDown
+            menu={dropDownData}
+            // value={filterData[value] as IDropDownMenuItem}
+            label={label}
+            onSelect={(data: IDropDownMenuItem) => {
+              FilterService.updateFilterData({
+                ...updateFilterDataProps,
+                dropDownType: value,
+                selectedItem: data,
+              });
+            }}
+          />
+        );
+      })}
+      <DateRangePicker
+        localeText={{
+          startLabel: UI_TEXT.START_DATE,
+          endLabel: UI_TEXT.END_DATE,
+        }}
+        value={[startTime, endTime]}
+        onChange={(data) => {
           FilterService.updateFilterData({
             ...updateFilterDataProps,
-            dropDownType: value,
-            selectedItem: data,
+            dateData: data,
           });
         }}
       />
-    );
-  });
+    </>
+  );
 };
 
 const Filter = (props: StateProps) => {
@@ -81,7 +102,6 @@ const Filter = (props: StateProps) => {
       </div>
       <div className="body">
         {renderDropDowns({ tableFilterDropDown, filterData, setFilterData })}
-        <DateRange />
       </div>
     </div>
   );

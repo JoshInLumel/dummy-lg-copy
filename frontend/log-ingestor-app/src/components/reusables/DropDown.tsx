@@ -10,11 +10,10 @@ import {
 } from "../../types/DropDown.types";
 
 const DropDown = (props: IDropDownPassedProps) => {
-  const { value, menu, label, onSelect } = props;
+  const { menu, label, onSelect } = props;
 
   return (
     <Autocomplete
-      // value={value}
       disablePortal
       id="combo-box-demo"
       options={menu}

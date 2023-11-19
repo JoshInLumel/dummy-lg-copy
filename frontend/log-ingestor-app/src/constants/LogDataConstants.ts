@@ -1,9 +1,9 @@
 import { ELOG_ITEM_KEYS } from "../types/LogData.types";
 
 export const LOG_DATA_LABELS = {
-  [ELOG_ITEM_KEYS.RESOURCE_ID]: "Resource Id",
+  [ELOG_ITEM_KEYS.RESOURCE_ID]: "Rsrc Id",
   [ELOG_ITEM_KEYS.LEVEL]: "Level",
-  [ELOG_ITEM_KEYS.PARENT_RESOURCE_ID]: "Parent Resource Id",
+  [ELOG_ITEM_KEYS.PARENT_RESOURCE_ID]: "Parent Rsrc Id",
   [ELOG_ITEM_KEYS.TRACE_ID]: "Trace Id",
   [ELOG_ITEM_KEYS.SPAN_ID]: "Span Id",
   [ELOG_ITEM_KEYS.MESSAGE]: "Message",

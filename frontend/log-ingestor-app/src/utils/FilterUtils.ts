@@ -18,7 +18,11 @@ export class FilterUtils {
       parentResourceId: getDefaultkeyData(),
       traceId: getDefaultkeyData(),
       spanId: getDefaultkeyData(),
-    };
+      dateData: {
+        startTime: "",
+        endTime: "",
+      },
+    } as IFilterData;
   };
 
   static getDropDownData = (
@@ -55,13 +59,21 @@ export class FilterUtils {
     const backendFilterQuery: IBackendFilterQuery = {};
 
     Object.keys(data).forEach((logkey) => {
-      const filterItem: IFilterItem = data[logkey as ELOG_ITEM_KEYS] ?? {
-        value: "",
-        label: "",
-      };
+      switch (logkey) {
+        case "dateData":
+          backendFilterQuery[logkey] = data[logkey];
+          break;
+        default: {
+          const filterItem: IFilterItem = data[logkey as ELOG_ITEM_KEYS] ?? {
+            value: "",
+            label: "",
+          };
 
-      const { label } = filterItem;
-      backendFilterQuery[logkey as ELOG_ITEM_KEYS] = label;
+          const { label } = filterItem;
+          backendFilterQuery[logkey as ELOG_ITEM_KEYS] = label;
+          break;
+        }
+      }
     });
 
     return backendFilterQuery;

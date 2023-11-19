@@ -8,6 +8,7 @@ export enum ELOG_ITEM_KEYS {
   COMMIT = "commit",
   META_DATA = "metadata",
   PARENT_RESOURCE_ID = "parentResourceId",
+  DATE_DATA = "dateData",
 }
 
 interface IMetaData {

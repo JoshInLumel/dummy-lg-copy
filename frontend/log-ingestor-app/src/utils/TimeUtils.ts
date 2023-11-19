@@ -2,7 +2,7 @@ export class TimeUtils {
   static formatTimeStamp = (dateString: string) => {
     const date = new Date(dateString);
 
-    const formattedDate = date.toLocaleString("en-US", {
+    const formattedDate = date.toLocaleString("en-GB", {
       day: "numeric",
       month: "numeric",
       year: "numeric",

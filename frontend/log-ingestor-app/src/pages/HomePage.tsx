@@ -11,7 +11,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { IDataTableRow } from "../types/DataTable.types";
 
 import { LOG_DATA_HEADERS } from "../constants/LogDataConstants";
-import { UI_MESSAGES } from "../constants/UIMessages";
+import { UI_TEXT } from "../constants/UIText";
 
 import "../styles/HomePage.css";
 
@@ -19,7 +19,7 @@ const renderDataTable = (tableRows: IDataTableRow[]) => {
   return tableRows.length ? (
     <DataTable rows={tableRows} headers={LOG_DATA_HEADERS} />
   ) : (
-    <EmptyState icon={faSearch} message={UI_MESSAGES.NO_RESULTS_FOUND} />
+    <EmptyState icon={faSearch} message={UI_TEXT.NO_RESULTS_FOUND} />
   );
 };
 

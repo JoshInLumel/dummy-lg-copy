@@ -22,12 +22,27 @@ export class FilterService {
   };
 
   static updateFilterData = (props: IUpdateFilterData) => {
-    const { dropDownType, selectedItem, filterData, setFilterData } = props;
+    const {
+      dropDownType = null,
+      selectedItem,
+      dateData = [],
+      filterData,
+      setFilterData,
+    } = props;
 
-    const updatedFilterData: IFilterData = {
+    const updatedFilterData = {
       ...filterData,
-      [dropDownType]: selectedItem ?? { label: "", value: "" },
-    };
+      ...(dropDownType
+        ? {
+            [dropDownType]: selectedItem ?? { label: "", value: "" },
+          }
+        : {
+            dateData: {
+              startTime: dateData[0]?.toISOString(),
+              endTime: dateData[1]?.toISOString(),
+            },
+          }),
+    } as IFilterData;
 
     FilterService.updateTableRowsStore(updatedFilterData);
     setFilterData(updatedFilterData);

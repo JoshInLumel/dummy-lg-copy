@@ -7,9 +7,14 @@ export interface IFilterItem {
   label: string;
 }
 
+export interface IDateData {
+  startTime?: string;
+  endTime?: string;
+}
+
 export type IFilterData = {
   [key in ELOG_ITEM_KEYS]?: IFilterItem;
-};
+} & { dateData?: IDateData };
 
 export interface IRenderFilterDropDowns {
   tableFilterDropDown: ITableFilterDropDowData;
@@ -18,10 +23,11 @@ export interface IRenderFilterDropDowns {
 }
 
 export interface IUpdateFilterData {
-  dropDownType: ELOG_ITEM_KEYS;
-  selectedItem: IDropDownMenuItem;
   filterData: IFilterData;
   setFilterData: (data: IFilterData) => void;
+  dropDownType?: ELOG_ITEM_KEYS;
+  selectedItem?: IDropDownMenuItem;
+  dateData?: any[];
 }
 
 export interface IResetFilterData {
@@ -29,5 +35,5 @@ export interface IResetFilterData {
 }
 
 export type IBackendFilterQuery = {
-  [key in ELOG_ITEM_KEYS]?: string;
+  [key in ELOG_ITEM_KEYS]?: string | IDateData;
 };
