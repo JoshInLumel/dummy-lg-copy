@@ -11,12 +11,13 @@ import {
 
 const DropDown = (props: IDropDownPassedProps) => {
   const { menu, label, onSelect } = props;
+  const limitedOptions = menu.slice(0,50);
 
   return (
     <Autocomplete
       disablePortal
       id="combo-box-demo"
-      options={menu}
+      options={limitedOptions}
       size="small"
       renderInput={(params) => <TextField {...params} label={label} />}
       onChange={(_, value) => {

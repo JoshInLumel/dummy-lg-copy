@@ -51,4 +51,23 @@ export class LogService {
       console.error("Error fetching data:", error);
     }
   };
+
+  static getSearchedLogs = async (searchQuery: any) => {
+    try {
+      const response = await axiosInstance.get(`/search`, {
+        params: { q: searchQuery },
+      });
+
+      const data = response.data;
+
+      if (data.status === "success") {
+        return data.logs;
+      } else {
+        console.error("Error fetching filtered logs:", data.error);
+      }
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 }
