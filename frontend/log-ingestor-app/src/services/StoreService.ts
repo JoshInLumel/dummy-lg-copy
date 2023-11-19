@@ -16,29 +16,6 @@ import {
 } from "../types/StoreTypes";
 
 export class StoreService {
-  static hydrateStore = (
-    data: ILogData,
-    isHydrateTableFilterDropDownStore: boolean = true
-  ) => {
-    const { tableRows, tableFilterDropDownData = null } =
-      this.getProcessedLogData({
-        logData: data,
-        ...(isHydrateTableFilterDropDownStore && {
-          dropDownData: {
-            resourceIds: [],
-            levels: [],
-            parentResourceIds: [],
-            traceIds: [],
-            spanIds: [],
-          },
-        }),
-      });
-
-    store.dispatch(hydrateTableRows(tableRows));
-
-    if (tableFilterDropDownData)
-      store.dispatch(hydrateTableFilterDropDown(tableFilterDropDownData));
-  };
 
   static getProcessedLogData = (
     props: IGetProcessedLogData
@@ -99,4 +76,30 @@ export class StoreService {
       }),
     };
   };
+  
+  static hydrateStore = (
+    data: ILogData,
+    isHydrateTableFilterDropDownStore: boolean = true
+  ) => {
+    const { tableRows, tableFilterDropDownData = null } =
+      this.getProcessedLogData({
+        logData: data,
+        ...(isHydrateTableFilterDropDownStore && {
+          dropDownData: {
+            resourceIds: [],
+            levels: [],
+            parentResourceIds: [],
+            traceIds: [],
+            spanIds: [],
+          },
+        }),
+      });
+
+    store.dispatch(hydrateTableRows(tableRows));
+
+    if (tableFilterDropDownData)
+      store.dispatch(hydrateTableFilterDropDown(tableFilterDropDownData));
+  };
+
+ 
 }

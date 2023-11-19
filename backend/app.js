@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const _ = require("lodash");
 const cors = require("cors");
 const { LOG_KEYS } = require("./constants/LogConstants");
 
@@ -12,6 +13,29 @@ mongoose.connect("mongodb://localhost:27017/logs", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+const computeSearchText = (log) => {
+  const searchableFields = [
+    "level",
+    "message",
+    "resourceId",
+    "timestamp",
+    "traceId",
+    "spanId",
+    "commit",
+    "metadata.parentResourceId",
+  ];
+
+  const searchText = searchableFields
+    .map((field) => {
+      // Use lodash.get to safely access nested fields
+      const value = _.get(log, field, "");
+      return String(value);
+    })
+    .join("~~##~~");
+
+  return searchText;
+};
 
 //creating a schema for the logs
 const logSchema = new mongoose.Schema({
@@ -25,7 +49,11 @@ const logSchema = new mongoose.Schema({
   metadata: {
     parentResourceId: { type: String, index: true },
   },
+  searchText: { type: String, required: true },
 });
+
+// Create a text index on the searchText field
+logSchema.index({ searchText: "text" });
 
 //creating a log model
 const Log = mongoose.model("Log", logSchema);
@@ -37,7 +65,11 @@ app.use(bodyParser.json());
 app.post("/api/log", (req, res) => {
   const logData = req.body;
 
-  const log = new Log(logData);
+  const updatedLogData = logData;
+  updatedLogData.searchText = computeSearchText(logData);
+
+  const log = new Log(updatedLogData);
+  console.log("log saving: ", log);
 
   // Save the log to the database
   log
@@ -55,6 +87,7 @@ app.post("/api/log", (req, res) => {
 app.get("/api/getLogs", async (req, res) => {
   try {
     const logs = await Log.find({});
+    console.log('logs: ', logs);
     res.json({ status: "success", logs });
   } catch (error) {
     console.error("Error fetching logs:", error);
@@ -111,6 +144,7 @@ app.get("/api/getFilteredLogs", async (req, res) => {
 
 // Endpoint to get the first N logs
 app.get("/api/firstNLogs/:limit", async (req, res) => {
+  console.log('res: ', res.params);
   try {
     const limit = parseInt(req.params.limit);
     const logs = await Log.find({}).limit(limit);
@@ -124,7 +158,23 @@ app.get("/api/firstNLogs/:limit", async (req, res) => {
 
 // Endpoint to delete logs by IDs
 app.delete("/api/deleteLogs", async (req, res) => {
+
+  // try {
+  //   // Use deleteMany to remove all documents in the collection
+  //   const result = await Log.deleteMany({});
+    
+  //   // Check the result to see if any documents were deleted
+  //   if (result.deletedCount > 0) {
+  //     console.log(`Deleted ${result.deletedCount} logs.`);
+  //   } else {
+  //     console.log('No logs found to delete.');
+  //   }
+  // } catch (error) {
+  //   console.error('Error cleaning logs:', error);
+  // }
+
   const logIds = req.body.logIds;
+  console.log('logIds: ', logIds);
 
   if (!logIds || !Array.isArray(logIds)) {
     return res
@@ -143,6 +193,8 @@ app.delete("/api/deleteLogs", async (req, res) => {
       res.status(404).json({ status: "error", error: "Logs not found" });
     }
   } catch (error) {
+    const logIds = req.body.logIds;
+    console.log('logIds: error ', logIds);
     console.error("Error deleting logs:", error);
     res.status(500).json({ status: "error", error: "Internal Server Error" });
   }
@@ -177,6 +229,46 @@ app.get("/api/getLogsByTimestamp", async (req, res) => {
   }
 });
 
+app.get("/api/search", async (req, res) => {
+  console.log("json...");
+  const searchText = req.query.q; // Get the search query from the request
+  console.log("backend got searchText: ", searchText);
+
+  try {
+    const results = await Log.find(
+      { $text: { $search: searchText } },
+      { score: { $meta: "textScore" } } // Optional: Sort by text search score
+    ).sort({ createdAt: -1 }); // Optional: Sort by timestamp or other fields
+
+    console.log("search results: ", results);
+
+    // res.status(200).json(results);
+
+    res.json({ status: "success", logs: results });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+const cleanAllLogs = async () => {
+  try {
+    // Use deleteMany to remove all documents in the collection
+    const result = await Log.deleteMany({});
+    
+    // Check the result to see if any documents were deleted
+    if (result.deletedCount > 0) {
+      console.log(`Deleted ${result.deletedCount} logs.`);
+    } else {
+      console.log('No logs found to delete.');
+    }
+  } catch (error) {
+    console.error('Error cleaning logs:', error);
+  }
+};
+
+//starting the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
